@@ -7,6 +7,87 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
 
+
+  const handleResponse = (xhr, parseResponse, acceptedType) => {
+      const content = document.querySelector('#content');
+      //const type = xhr.getResponseHeader('content-type');
+      //const type = xhr.getResponseHeader('content-type');
+        //const obj = JSON.parse(xhr.response);
+        switch(xhr.status){
+            case 200:
+                content.innerHTML = `<b>Success</b>`;
+                break;
+            case 201:
+                content.innerHTML = `<b>Created</b>`;
+                break;
+            case 400:
+                content.innerHTML = `<b>Bad Request</b>`;
+                break;
+            case 404:
+                content.innerHTML = `<b>Not Found</b>`;
+                break;
+            case 401:
+                content.innerHTML = `<b>Unauthorized</b>`;
+                break;
+            case 403:
+                content.innerHTML = `<b>Forbidden</b>`;
+                break;
+            case 500:
+                content.innerHTML = `<b>Internal Server Error</b>`;
+                break;
+            case 501:
+                content.innerHTML = `<b>Not Implemented</b>`;
+                break;
+            default:
+                content.innerHTML = `<b>Error code not implimented by client</b>`;
+                break;
+        }
+        console.log(acceptedType.value);
+        if(parseResponse && acceptedType.value === 'application/json'){
+            const obj = JSON.parse(xhr.response);
+            //console.dir(obj);
+            const mess = document.createElement('p');
+            mess.innerHTML = obj.message;
+            document.querySelector('#content').appendChild(mess);
+        }
+        else if(parseResponse && acceptedType.value === 'text/xml'){
+            console.log(xhr.response);
+            const objMess = xhr.responseXML.querySelector('message').textContent;
+            const mess = document.createElement('p');
+            mess.innerHTML = objMess;
+            document.querySelector('#content').appendChild(mess);
+        }
+    };
+
+    const requestUpdate = (e, acceptedType) => {
+      const url = page.value;
+        //console.log(type.value);
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', url);
+        
+        xhr.setRequestHeader('Accept', acceptedType.value);
+        console.log(acceptedType);
+        xhr.onload = () => handleResponse(xhr, true, acceptedType);
+        xhr.send();
+        
+        e.preventDefault();
+        return false;
+      
+
+    };
+
+
+
+    const init = () => {
+      const page = document.querySelector('#page');
+      const type = document.querySelector('#type');
+        
+      const getPage = (e) => requestUpdate(e, type);
+      document.querySelector('#send').addEventListener('click', getPage);
+    };
+
+    window.onload = init;
+
   </script>
 </head>
 <body>
