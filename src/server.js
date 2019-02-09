@@ -20,18 +20,17 @@ const urlStruct = {
 
 
 const onRequest = (request, response) => {
-    
-const parsedUrl = url.parse(request.url);
-const params = query.parse(parsedUrl.query);
-const acceptedTypes = request.headers.accept.split(',');
+  const parsedUrl = url.parse(request.url);
+  const params = query.parse(parsedUrl.query);
+  const acceptedTypes = request.headers.accept.split(',');
 
   if (urlStruct[parsedUrl.pathname]) {
     urlStruct[parsedUrl.pathname](request, response, params, acceptedTypes);
   } else {
-    urlStruct.notFound(request, response, params,acceptedTypes);
+    urlStruct.notFound(request, response, params, acceptedTypes);
   }
 };
-    
+
 
 http.createServer(onRequest).listen(port);
 
